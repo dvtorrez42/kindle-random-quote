@@ -1,0 +1,9 @@
+[project]
+name = "kindle-random-quote"
+version = "0.1.0"
+description = "Reads and parses kindle clippings, selects one at random and sends it via a the Telegram Bot API."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.32.3",
+]
