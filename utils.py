@@ -71,7 +71,7 @@ def clean_text_4_markdown(dirty_text):
     cleaned_text = re.sub(f"([{re.escape(chars_to_escape)}])", r"\\\1", dirty_text)
     return cleaned_text
 
-def parse_clippings(file_path):
+def parse_clippings(file_path, chat_id):
     """
     Parses a Kindle clippings file and extracts quotes along with their metadata.
 
@@ -111,6 +111,13 @@ def parse_clippings(file_path):
                 }
             ]
     """
+    
+    chat_id_dict = {
+        "831778701": "Dani",
+        "6214991004": "Pau",
+        "971556400": "Fecho"
+    }
+    
     # Initialize an empty list to stores parsed quotes
     parsed_data = []
     
@@ -130,6 +137,7 @@ def parse_clippings(file_path):
                 quote = clean_text_4_markdown(match.group(6))
                 
                 parsed_data.append({
+                    'lectore': chat_id_dict[chat_id],
                     'title': title,
                     'author': author,
                     'position': position,
@@ -137,55 +145,6 @@ def parse_clippings(file_path):
                     'quote': quote
                 })
     return parsed_data
-
-def select_random_quote(quotes):
-    """
-    Selects a random quote from a list of quotes and formats it as a Markdown string.
-
-    The function randomly selects a quote from the input list and returns a formatted 
-    string containing the quote, author, book title, and the date it was highlighted.
-
-    Args:
-        quotes (list): A list of dictionaries, where each dictionary represents a quote 
-                       and contains the following keys:
-                       - 'quote' (str): The text of the quote.
-                       - 'author' (str): The author of the quote.
-                       - 'title' (str): The title of the book.
-                       - 'date_added' (str): The date the quote was highlighted.
-
-    Returns:
-        str: A Markdown-formatted string containing the selected quote and its metadata.
-
-    Example:
-        Given the input:
-            [
-                {
-                    "quote": "This is a random quote.",
-                    "author": "Author Name",
-                    "title": "Book Title",
-                    "date_added": "January 1, 2023"
-                }
-            ]
-
-        The function may return:
-            ```
-            >This is a random quote. 
-            
-            \- Author Name 
-            
-            *Libro*: _"Book Title"_ 
-            
-            Subrayada el January 1, 2023
-            ```
-    """
-    random_quote= random.choice(quotes)
-    message = (
-        f'>{random_quote["quote"]} \n\n'
-        f'\\- {random_quote["author"]} \n\n'
-        f'*Libro*: _"{random_quote["title"]}"_ \n\n'
-        f'Subrayada el {random_quote["date_added"]} \n'
-    )
-    return message
 
 def send_to_telegram(message, api_url, chat_id):
     """
